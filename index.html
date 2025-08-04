@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Free Fire Tournament</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  body {
+    margin: 0; padding: 0;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* Scroll marquee */
+  .scrolling-announcement {
+    width: 100%;
+    background: #ffcc00;
+    color: #000;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding: 10px 0;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+  }
+  .scrolling-announcement span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 15s linear infinite;
+  }
+  @keyframes scroll-left {
+    0% {transform: translateX(0);}
+    100% {transform: translateX(-100%);}
+  }
+  /* Header with image */
+  header {
+    margin-top: 60px;
+    text-align: center;
+  }
+  header img {
+    width: 140px;
+    height: auto;
+    margin-bottom: 8px;
+    filter: drop-shadow(0 0 4px #ffcc00);
+  }
+  header h1 {
+    font-size: 2rem;
+    letter-spacing: 1.5px;
+    color: #ffcc00;
+    text-shadow: 0 0 10px #ffcc00;
+    margin-bottom: 20px;
+  }
+  /* Buttons */
+  .buttons-group {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .buttons-group button {
+    background: #1f2937;
+    border: 2px solid #ffcc00;
+    color: #ffcc00;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .buttons-group button:hover,
+  .buttons-group button.active {
+    background: #ffcc00;
+    color: #1f2937;
+    box-shadow: 0 0 10px #ffcc00;
+  }
+  /* Form container */
+  .form-container {
+    background: rgba(31, 41, 55, 0.9);
+    padding: 25px 30px;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 0 20px #ffcc00;
+  }
+  .form-group {
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #ffcc00;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    outline: none;
+  }
+  .form-group input:focus {
+    box-shadow: 0 0 8px #ffcc00;
+  }
+  button.submit-btn {
+    width: 100%;
+    padding: 14px;
+    font-weight: 700;
+    font-size: 18px;
+    background: #ffcc00;
+    border: none;
+    border-radius: 12px;
+    color: #1f2937;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  button.submit-btn:hover {
+    background: #e6b800;
+  }
+  /* Player counts */
+  .player-counts {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 28px;
+    max-width: 480px;
+    width: 100%;
+  }
+  .player-counts div {
+    background: #1f2937;
+    padding: 14px 22px;
+    border-radius: 14px;
+    text-align: center;
+    flex: 1;
+    margin: 0 6px;
+    box-shadow: 0 0 8px #ffcc00aa;
+  }
+  .player-counts div h3 {
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: #ffcc00;
+  }
+  .player-counts div span {
+    font-size: 22px;
+    font-weight: 700;
+    color: #00ffcc;
+  }
+  /* Alert message */
+  .alert-message {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #22c55e;
+    color: white;
+    padding: 14px 30px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 17px;
+    box-shadow: 0 0 20px #22c55e;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+    z-index: 1500;
+  }
+  .alert-message.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Responsive */
+  @media (max-width: 520px) {
+    .buttons-group {
+      flex-direction: column;
+      align-items: center;
+    }
+    .player-counts {
+      flex-direction: column;
+    }
+    .player-counts div {
+      margin: 6px 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="scrolling-announcement"><span>🔥 আজকের টুর্নামেন্ট চলতে থাকবে | জয় করে টাকা ইনকাম করুন! 🔥</span></div>
+
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Free_Fire_Logo.svg" alt="Free Fire Logo" />
+    <h1>Free Fire Tournament Registration</h1>
+  </header>
+
+  <div class="buttons-group" id="matchButtons">
+    <button data-match="cs" class="active">CS Match</button>
+    <button data-match="rank">Rank Match</button>
+    <button data-match="custom">Custom Match</button>
+  </div>
+
+  <div class="buttons-group" id="subModeButtons" style="margin-bottom:25px;">
+    <button data-submode="solo" class="active">Solo</button>
+    <button data-submode="duo">Duo</button>
+    <button data-submode="squad">Squad</button>
+  </div>
+
+  <div class="form-container">
+    <form id="tournamentForm">
+      <div id="playersFields"></div>
+
+      <div class="form-group">
+        <label for="bkash">bKash Number</label>
+        <input type="text" id="bkash" placeholder="01XXXXXXXXX" required />
+      </div>
+
+      <div class="form-group">
+        <label for="trxid">Transaction ID (TrxID)</label>
+        <input type="text" id="trxid" placeholder="e.g. TX123456789" required />
+      </div>
+
+      <button type="submit" class="submit-btn">Submit</button>
+    </form>
+  </div>
+
+  <div class="player-counts">
+    <div><h3>CS Players</h3><span id="csCount">0</span></div>
+    <div><h3>Rank Players</h3><span id="rankCount">0</span></div>
+    <div><h3>Custom Players</h3><span id="customCount">0</span></div>
+  </div>
+
+  <div class="alert-message" id="alertMessage">Successfully submitted!</div>
+
+<script>
+  const botToken = "YOUR_BOT_TOKEN_HERE";
+  const chatId = "YOUR_GROUP_CHAT_ID_HERE";
+
+  // Initial states
+  let selectedMatch = 'cs';
+  let selectedSubmode = 'solo';
+
+  const matchButtons = document.querySelectorAll('#matchButtons button');
+  const subModeButtons = document.querySelectorAll('#subModeButtons button');
+  const playersFields = document.getElementById('playersFields');
+  const tournamentForm = document.getElementById('tournamentForm');
+  const alertMessage = document.getElementById('alertMessage');
+
+  const playerCounts = {
+    cs: 0,
+    rank: 0,
+    custom: 0
+  };
+
+  function updateActiveButtons(buttons, activeValue) {
+    buttons.forEach(btn => {
+      if(btn.dataset.match === activeValue || btn.dataset.submode === activeValue){
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  function createPlayerInputs(count) {
+    playersFields.innerHTML = '';
+    for(let i=1; i<=count; i++){
+      playersFields.innerHTML += `
+        <div class="form-group">
+          <label>Player ${i} UID</label>
+          <input type="text" name="uid${i}" placeholder="Player ${i} UID" required />
+        </div>
+        <div class="form-group">
+          <label>Player ${i} Game Name</label>
+          <input type="text" name="name${i}" placeholder="Player ${i} Game Name" required />
+        </div>
+      `;
+    }
+  }
+
+  // Set initial form fields for solo
+  createPlayerInputs(1);
+
+  // Match buttons click
+  matchButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedMatch = btn.dataset.match;
+      updateActiveButtons(matchButtons, selectedMatch);
+      updatePlayerCountDisplay();
+      // Reset player inputs on match change
+      createPlayerInputs(getPlayerCountForSubmode(selectedSubmode));
+    });
+  });
+
+  // Submode buttons click
+  subModeButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedSubmode = btn.dataset.submode;
+      updateActiveButtons(subModeButtons, selectedSubmode);
+      createPlayerInputs(getPlayerCountForSubmode(selectedSubmode));
+    });
+  });
+
+  function getPlayerCountForSubmode(submode){
+    if(submode === 'solo') return 1;
+    if(submode === 'duo') return 2;
+    if(submode === 'squad') return 4;
+    return 1;
+  }
+
+  function updatePlayerCountDisplay(){
+    document.getElementById('csCount').textContent = playerCounts.cs;
+    document.getElementById('rankCount').textContent = playerCounts.rank;
+    document.getElementById('customCount').textContent = playerCounts.custom;
+  }
+
+  function showAlert(message){
+    alertMessage.textContent = message;
+    alertMessage.classList.add('show');
+    setTimeout(() => {
+      alertMessage.classList.remove('show');
+    }, 3500);
+  }
+
+  tournamentForm.addEventListener('submit', async e => {
+    e.preventDefault();
+
+    const formData = new FormData(tournamentForm);
+
+    let message = `🔥 New Free Fire Tournament Entry 🔥\n\n`;
+    message += `Match Type: ${selectedMatch.toUpperCase()}\n`;
+    message += `Mode: ${selectedSubmode.toUpperCase()}\n\n`;
+
+    // Add players info
+    const playerCount = getPlayerCountForSubmode(selectedSubmode);
+    for(let i=1; i<=playerCount; i++){
+      message += `Player ${i} UID: ${formData.get('uid'+i)}\n`;
+      message += `Player ${i} Name: ${formData.get('name'+i)}\n\n`;
+    }
+
+    message += `bKash Number: ${formData.get('bkash')}\n`;
+    message += `Transaction ID: ${formData.get('trxid')}\n`;
+
+    // Send to telegram bot
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: message
+        })
+      });
+      const data = await res.json();
+      if(data.ok){
+        // Update count
+        playerCounts[selectedMatch] += playerCount;
+        updatePlayerCountDisplay();
+
+        tournamentForm.reset();
+        createPlayerInputs(getPlayerCountForSubmode(selectedSubmode));
+        showAlert('✅ Registration Successful!');
+      } else {
+        showAlert('❌ Telegram API Error!');
+      }
+    } catch(err) {
+      showAlert('❌ Network Error! Try again.');
+    }
+  });
+
+  // Init player count display
+  updatePlayerCountDisplay();
+
+</script>
+
+</body>
+</html>
